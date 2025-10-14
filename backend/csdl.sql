@@ -154,4 +154,85 @@ INSERT INTO `Roles` (`role_name`) VALUES
 -- Kết thúc script
 SELECT 'Database and tables created successfully.' AS status;
 
---dữ liệu mẫu
+-- dữ liệu mẫu
+-- BƯỚC 1: THÊM DỮ LIỆU CƠ BẢN --
+
+-- Thêm Nhà xe (Companies)
+INSERT INTO `Companies` (`company_id`, `name`, `hotline`, `status`) VALUES
+(1, 'Phương Trang - FUTA Bus Lines', '19006067', 'active'),
+(2, 'Thành Bưởi', '19006079', 'active');
+
+-- Thêm Địa điểm (Locations)
+INSERT INTO `Locations` (`location_id`, `name`, `city`, `address`) VALUES
+(1, 'Bến xe Miền Đông Mới', 'Hồ Chí Minh', '501 Hoàng Hữu Nam, P. Long Bình, TP. Thủ Đức'),
+(2, 'Bến xe Đà Lạt', 'Đà Lạt', '01 Tô Hiến Thành, Phường 3, TP. Đà Lạt'),
+(3, 'Bến xe Cần Thơ', 'Cần Thơ', 'QL1A, Hưng Thạnh, Cái Răng, Cần Thơ'),
+(4, 'Bến xe Nước Ngầm', 'Hà Nội', 'Km số 8, Giải Phóng, Hoàng Mai, Hà Nội');
+
+-- Thêm Người dùng (Users)
+-- Lưu ý: password_hash nên được tạo bằng thuật toán hashing như BCrypt. Ở đây chỉ là placeholder.
+INSERT INTO `Users` (`user_id`, `full_name`, `email`, `phone_number`, `password_hash`, `role_id`, `company_id`) VALUES
+(1, 'Super Admin', 'superadmin@busbooking.com', '0900000001', '$2a$10$abc...', 1, NULL),
+(2, 'Admin Phương Trang', 'admin.pt@phuongtrang.com', '0900000002', '$2a$10$abc...', 2, 1),
+(3, 'Nhân viên Thành Bưởi', 'agent.tb@thanhbuoi.com', '0900000003', '$2a$10$abc...', 3, 2),
+(4, 'Nguyễn Văn An', 'nguyenvana@email.com', '0912345678', '$2a$10$abc...', 4, NULL),
+(5, 'Trần Thị Bích', 'tranbich@email.com', '0987654321', '$2a$10$abc...', 4, NULL);
+
+
+-- BƯỚC 2: THÊM DỮ LIỆU VẬN HÀNH --
+
+-- Thêm Tuyến đường (Routes)
+INSERT INTO `Routes` (`route_id`, `company_id`, `departure_location_id`, `arrival_location_id`, `duration_minutes`) VALUES
+(1, 1, 1, 2, 480), -- Phương Trang: HCM -> Đà Lạt (8 tiếng)
+(2, 2, 1, 2, 450), -- Thành Bưởi: HCM -> Đà Lạt (7.5 tiếng)
+(3, 1, 1, 3, 240); -- Phương Trang: HCM -> Cần Thơ (4 tiếng)
+
+-- Thêm Xe khách (Buses)
+INSERT INTO `Buses` (`bus_id`, `company_id`, `license_plate`, `seat_type`, `total_seats`) VALUES
+(1, 1, '51F-123.45', 'Giường nằm 40 chỗ', 40),
+(2, 1, '51F-234.56', 'Limousine 34 chỗ', 34),
+(3, 2, '50F-987.65', 'Giường nằm 36 chỗ', 36);
+
+-- Thêm Chuyến đi (Trips)
+-- Lưu ý: Thời gian trong tương lai
+INSERT INTO `Trips` (`trip_id`, `route_id`, `bus_id`, `departure_time`, `arrival_time`, `base_price`, `status`) VALUES
+(1, 1, 1, '2025-10-20 08:00:00', '2025-10-20 16:00:00', 350000.00, 'scheduled'),
+(2, 1, 2, '2025-10-20 10:00:00', '2025-10-20 18:00:00', 450000.00, 'scheduled'),
+(3, 2, 3, '2025-10-21 09:00:00', '2025-10-21 16:30:00', 320000.00, 'scheduled');
+
+
+-- BƯỚC 3: TẠO GHẾ CHO MỘT CHUYẾN ĐI CỤ THỂ --
+-- Tạo ra 40 ghế cho chuyến đi có trip_id = 1 (Xe Phương Trang 40 chỗ)
+INSERT INTO `Seats` (`trip_id`, `seat_number`, `status`) VALUES
+(1, 'A01', 'available'), (1, 'A02', 'available'), (1, 'A03', 'available'), (1, 'A04', 'available'), (1, 'A05', 'available'),
+(1, 'A06', 'available'), (1, 'A07', 'available'), (1, 'A08', 'available'), (1, 'A09', 'available'), (1, 'A10', 'available'),
+(1, 'A11', 'available'), (1, 'A12', 'available'), (1, 'A13', 'available'), (1, 'A14', 'available'), (1, 'A15', 'available'),
+(1, 'A16', 'available'), (1, 'A17', 'available'), (1, 'A18', 'available'), (1, 'A19', 'available'), (1, 'A20', 'available'),
+(1, 'B01', 'available'), (1, 'B02', 'available'), (1, 'B03', 'available'), (1, 'B04', 'available'), (1, 'B05', 'available'),
+(1, 'B06', 'available'), (1, 'B07', 'available'), (1, 'B08', 'available'), (1, 'B09', 'available'), (1, 'B10', 'available'),
+(1, 'B11', 'available'), (1, 'B12', 'available'), (1, 'B13', 'available'), (1, 'B14', 'available'), (1, 'B15', 'available'),
+(1, 'B16', 'available'), (1, 'B17', 'available'), (1, 'B18', 'available'), (1, 'B19', 'available'), (1, 'B20', 'available');
+
+
+-- BƯỚC 4: MÔ PHỎNG MỘT GIAO DỊCH ĐẶT VÉ THÀNH CÔNG --
+-- Hành khách Nguyễn Văn An (user_id = 4) đặt 2 ghế A05 và A06 trên chuyến đi trip_id = 1
+
+-- 4.1. Cập nhật trạng thái 2 ghế thành 'booked'
+UPDATE `Seats` SET `status` = 'booked' WHERE `trip_id` = 1 AND `seat_number` IN ('A05', 'A06');
+
+-- 4.2. Tạo một đơn đặt vé (Booking) mới
+INSERT INTO `Bookings` (`user_id`, `trip_id`, `total_amount`, `status`) VALUES
+(4, 1, 700000.00, 'confirmed');
+
+-- 4.3. Lấy booking_id vừa tạo (giả sử là 1) và seat_id của ghế A05, A06 (giả sử là 5, 6) để tạo vé
+INSERT INTO `Tickets` (`booking_id`, `seat_id`, `passenger_name`, `passenger_phone`, `price`) VALUES
+(1, 5, 'Nguyễn Văn An', '0912345678', 350000.00),
+(1, 6, 'Vợ Nguyễn Văn An', '0912345678', 350000.00);
+
+-- 4.4. Tạo một giao dịch thanh toán (Payment) thành công cho đơn đặt vé
+INSERT INTO `Payments` (`booking_id`, `payment_method`, `amount`, `transaction_code`, `payment_time`, `status`) VALUES
+(1, 'VNPAY', 700000.00, 'VNP13959913', NOW(), 'successful');
+
+
+-- Kết thúc script
+SELECT 'Sample data inserted successfully.' AS `status`;
