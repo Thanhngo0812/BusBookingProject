@@ -1,6 +1,17 @@
 package com.ct08j2e.busbookingproject.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Converter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
 
 @Entity
@@ -32,7 +43,7 @@ public class Ticket {
     @Column(name = "qr_code_url", length = 255)
     private String qrCodeUrl;
     
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = Ticket.TicketStatusConverter.class)
     @Column(name = "status")
     private TicketStatus status = TicketStatus.VALID;
     
@@ -115,7 +126,25 @@ public class Ticket {
         this.status = status;
     }
     
-    public enum TicketStatus {
+    // Nested types to consolidate files
+    public static enum TicketStatus {
         VALID, CANCELLED, CHECKED_IN
+    }
+    
+    @Converter(autoApply = false)
+    public static class TicketStatusConverter implements AttributeConverter<TicketStatus, String> {
+        @Override
+        public String convertToDatabaseColumn(TicketStatus attribute) {
+            if (attribute == null) return null;
+            // Store as lowercase to match DB schema
+            return attribute.name().toLowerCase();
+        }
+
+        @Override
+        public TicketStatus convertToEntityAttribute(String dbData) {
+            if (dbData == null) return null;
+            // Accept case-insensitive from DB
+            return TicketStatus.valueOf(dbData.trim().toUpperCase());
+        }
     }
 }

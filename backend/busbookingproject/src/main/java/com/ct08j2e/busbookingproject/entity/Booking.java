@@ -1,6 +1,18 @@
 package com.ct08j2e.busbookingproject.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Converter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -28,7 +40,7 @@ public class Booking {
     @Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount;
     
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = Booking.BookingStatusConverter.class)
     @Column(name = "status")
     private BookingStatus status = BookingStatus.PENDING_PAYMENT;
     
@@ -127,8 +139,28 @@ public class Booking {
     public void setPayments(Set<Payment> payments) {
         this.payments = payments;
     }
-    
-    public enum BookingStatus {
-        PENDING_PAYMENT, CONFIRMED, CANCELLED
+
+    // Nested types to consolidate files
+    public static enum BookingStatus {
+        PENDING_PAYMENT,
+        CONFIRMED,
+        CANCELLED
+    }
+
+    @Converter(autoApply = false)
+    public static class BookingStatusConverter implements AttributeConverter<BookingStatus, String> {
+        @Override
+        public String convertToDatabaseColumn(BookingStatus attribute) {
+            if (attribute == null) return null;
+            // Store as UPPERCASE
+            return attribute.name();
+        }
+
+        @Override
+        public BookingStatus convertToEntityAttribute(String dbData) {
+            if (dbData == null) return null;
+            // Accept lowercase/uppercase from DB
+            return BookingStatus.valueOf(dbData.trim().toUpperCase());
+        }
     }
 }

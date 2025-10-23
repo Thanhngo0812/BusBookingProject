@@ -1,9 +1,21 @@
 package com.ct08j2e.busbookingproject.entity;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
+
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Converter;
 
 @Entity
 @Table(name = "Trips")
@@ -31,7 +43,7 @@ public class Trip {
     @Column(name = "base_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal basePrice;
     
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = Trip.TripStatusConverter.class)
     @Column(name = "status")
     private TripStatus status = TripStatus.SCHEDULED;
     
@@ -126,8 +138,29 @@ public class Trip {
     public void setBookings(Set<Booking> bookings) {
         this.bookings = bookings;
     }
-    
-    public enum TripStatus {
-        SCHEDULED, RUNNING, COMPLETED, CANCELLED
+
+    // Nested types to consolidate files
+    public static enum TripStatus {
+        SCHEDULED,
+        RUNNING,
+        COMPLETED,
+        CANCELLED
+    }
+
+    @Converter(autoApply = false)
+    public static class TripStatusConverter implements AttributeConverter<TripStatus, String> {
+        @Override
+        public String convertToDatabaseColumn(TripStatus attribute) {
+            if (attribute == null) return null;
+            // Store as lowercase to be tolerant with existing data
+            return attribute.name().toLowerCase();
+        }
+
+        @Override
+        public TripStatus convertToEntityAttribute(String dbData) {
+            if (dbData == null) return null;
+            // Accept lowercase/uppercase/mixed case
+            return TripStatus.valueOf(dbData.trim().toUpperCase());
+        }
     }
 }

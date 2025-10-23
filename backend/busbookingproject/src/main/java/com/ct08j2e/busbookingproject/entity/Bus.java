@@ -1,8 +1,17 @@
 package com.ct08j2e.busbookingproject.entity;
 
 
-import jakarta.persistence.*;
 import java.util.Set;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Buses")
@@ -79,6 +88,11 @@ public class Bus {
     
     public void setTotalSeats(Integer totalSeats) {
         this.totalSeats = totalSeats;
+    }
+    
+    // Alias method for seat capacity
+    public Integer getSeatCapacity() {
+        return totalSeats;
     }
     
     public Set<Trip> getTrips() {

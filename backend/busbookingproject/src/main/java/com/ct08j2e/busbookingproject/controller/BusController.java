@@ -1,16 +1,26 @@
 package com.ct08j2e.busbookingproject.controller;
 
 
-import com.ct08j2e.busbookingproject.dto.BusDTO;
-import com.ct08j2e.busbookingproject.dto.ApiResponse;
-import com.ct08j2e.busbookingproject.service.BusService;
-import jakarta.validation.Valid;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.ct08j2e.busbookingproject.dto.ApiResponse;
+import com.ct08j2e.busbookingproject.dto.BusDTO;
+import com.ct08j2e.busbookingproject.service.BusService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/buses")
@@ -31,7 +41,7 @@ public class BusController {
     public ResponseEntity<ApiResponse<List<BusDTO>>> getAllBuses() {
         List<BusDTO> buses = busService.getAllBuses();
         return ResponseEntity.ok(
-            new ApiResponse<>(true, "Lấy danh sách xe thành công", buses)
+            new ApiResponse<>(true, "✅ Lấy danh sách xe thành công! Tìm thấy " + buses.size() + " xe.", buses)
         );
     }
 
@@ -42,7 +52,7 @@ public class BusController {
     public ResponseEntity<ApiResponse<BusDTO>> getBusById(@PathVariable Integer id) {
         BusDTO bus = busService.getBusById(id);
         return ResponseEntity.ok(
-            new ApiResponse<>(true, "Lấy thông tin xe thành công", bus)
+            new ApiResponse<>(true, "✅ Lấy thông tin xe thành công!", bus)
         );
     }
 
@@ -90,7 +100,7 @@ public class BusController {
             @Valid @RequestBody BusDTO busDTO) {
         BusDTO createdBus = busService.createBus(busDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(
-            new ApiResponse<>(true, "Tạo xe thành công", createdBus)
+            new ApiResponse<>(true, "✅ Tạo xe mới thành công! Biển số: " + createdBus.getLicensePlate(), createdBus)
         );
     }
 
@@ -103,7 +113,7 @@ public class BusController {
             @Valid @RequestBody BusDTO busDTO) {
         BusDTO updatedBus = busService.updateBus(id, busDTO);
         return ResponseEntity.ok(
-            new ApiResponse<>(true, "Cập nhật xe thành công", updatedBus)
+            new ApiResponse<>(true, "✅ Cập nhật thông tin xe thành công!", updatedBus)
         );
     }
 
@@ -114,7 +124,7 @@ public class BusController {
     public ResponseEntity<ApiResponse<Void>> deleteBus(@PathVariable Integer id) {
         busService.deleteBus(id);
         return ResponseEntity.ok(
-            new ApiResponse<>(true, "Xóa xe thành công", null)
+            new ApiResponse<>(true, "✅ Xóa xe thành công! ID: " + id, null)
         );
     }
 
@@ -130,7 +140,7 @@ public class BusController {
             @RequestParam(required = false) Integer maxSeats) {
         List<BusDTO> buses = busService.searchBuses(companyId, seatType, minSeats, maxSeats);
         return ResponseEntity.ok(
-            new ApiResponse<>(true, "Tìm kiếm xe thành công", buses)
+            new ApiResponse<>(true, "✅ Tìm kiếm xe thành công! Tìm thấy " + buses.size() + " xe phù hợp.", buses)
         );
     }
 }

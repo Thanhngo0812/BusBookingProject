@@ -1,6 +1,18 @@
 package com.ct08j2e.busbookingproject.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Converter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "Seats", uniqueConstraints = {
@@ -20,7 +32,7 @@ public class Seat {
     @Column(name = "seat_number", nullable = false, length = 10)
     private String seatNumber;
     
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = Seat.SeatStatusConverter.class)
     @Column(name = "status")
     private SeatStatus status = SeatStatus.AVAILABLE;
     
@@ -78,6 +90,23 @@ public class Seat {
     }
     
     public enum SeatStatus {
-        AVAILABLE, BOOKED
+        AVAILABLE, PENDING, BOOKED
+    }
+
+    @Converter(autoApply = false)
+    public static class SeatStatusConverter implements AttributeConverter<SeatStatus, String> {
+        @Override
+        public String convertToDatabaseColumn(SeatStatus attribute) {
+            if (attribute == null) return null;
+            // Store as UPPERCASE to match enum convention
+            return attribute.name();
+        }
+
+        @Override
+        public SeatStatus convertToEntityAttribute(String dbData) {
+            if (dbData == null) return null;
+            // Accept lowercase/uppercase/mixed case from DB
+            return SeatStatus.valueOf(dbData.trim().toUpperCase());
+        }
     }
 }

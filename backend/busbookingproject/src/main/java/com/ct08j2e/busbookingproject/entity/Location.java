@@ -53,6 +53,11 @@ public class Location {
         this.name = name;
     }
     
+    // Alias method for location name
+    public String getLocationName() {
+        return name;
+    }
+    
     public String getCity() {
         return city;
     }

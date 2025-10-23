@@ -1,7 +1,16 @@
 package com.ct08j2e.busbookingproject.entity;
 
-import jakarta.persistence.*;
 import java.util.Set;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "Companies")
@@ -25,8 +34,8 @@ public class Company {
     private String description;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private CompanyStatus status = CompanyStatus.ACTIVE;
+    @Column(name = "status", columnDefinition = "ENUM('active', 'inactive')")
+    private CompanyStatus status = CompanyStatus.active;
     
     @OneToMany(mappedBy = "company")
     private Set<User> users;
@@ -64,6 +73,11 @@ public class Company {
     
     public void setName(String name) {
         this.name = name;
+    }
+    
+    // Alias method for company name
+    public String getCompanyName() {
+        return name;
     }
     
     public String getLogoUrl() {
@@ -123,6 +137,6 @@ public class Company {
     }
     
     public enum CompanyStatus {
-        ACTIVE, INACTIVE
+        active, inactive
     }
 }
