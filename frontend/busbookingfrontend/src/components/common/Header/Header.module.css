@@ -1,0 +1,161 @@
+/* --- Các style gốc (Desktop) của bạn --- */
+.header {
+    background: linear-gradient(to right, #fd8d24, #f56d04);
+    color: white;
+    font-family: Arial, sans-serif;
+    /* Thêm z-index để nó đè lên nội dung khác khi menu mobile mở */
+    position: relative;
+    z-index: 10;
+  }
+  
+  .topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10%;
+    background-color: rgba(0, 0, 0, 0.1);
+    font-size: 13px;
+  }
+  
+  .topLeft span {
+    margin-right: 20px;
+    cursor: pointer;
+  }
+  
+  .authButton {
+    background-color: #fff;
+    color: #f56d04;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .mainNav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10%;
+    /* Thêm position relative để menu mobile có thể định vị tuyệt đối */
+    position: relative;
+  }
+  
+  .logoText {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .navLinks {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navLinks li {
+    margin-left: 25px;
+  }
+  
+  .navLinks a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    padding-bottom: 5px;
+    display: block; /* Thêm để padding hoạt động tốt hơn */
+  }
+  
+  .navLinks a.active,
+  .navLinks a:hover {
+    border-bottom: 2px solid white;
+  }
+  
+  /* --- THÊM MỚI: Style cho nút Hamburger ---
+  (Mặc định ẩn trên desktop)
+  */
+  .hamburger {
+    display: none; /* Ẩn trên desktop */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 101; /* Luôn ở trên menu */
+  }
+  
+  .hamburger span {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+  }
+  
+  /* --- THÊM MỚI: Media Queries cho Responsive ---
+  */
+  
+  /* 1. Cho Tablet (ẩn top bar, giảm padding) */
+  @media (max-width: 992px) {
+    .topBar {
+      display: none; /* Ẩn bớt thanh topbar cho gọn */
+    }
+    .mainNav {
+      padding: 10px 5%; /* Giảm padding hai bên */
+    }
+    .navLinks li {
+      margin-left: 15px; /* Giảm khoảng cách links */
+    }
+  }
+  
+  /* 2. Cho Mobile (chuyển sang menu hamburger) */
+  @media (max-width: 768px) {
+    .mainNav {
+      padding: 10px 5%;
+    }
+  
+    /* Ẩn menu gốc và hiện nút hamburger */
+    .hamburger {
+      display: block; /* Hiện nút hamburger */
+    }
+  
+    .navLinks {
+      display: none; /* Ẩn menu links */
+      flex-direction: column; /* Xếp dọc */
+      
+      /* Định vị tuyệt đối để bung ra */
+      position: absolute;
+      top: 100%; /* Bung ra ngay dưới .mainNav */
+      left: 0;
+      width: 100%;
+      
+      /* Style cho menu bung ra */
+      background-color: #f56d04;
+      padding: 10px 0;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* ĐÂY LÀ CLASS ĐỂ KÍCH HOẠT MENU (từ JS) */
+    .mobileMenuOpen {
+      display: flex; /* Hiện menu lên */
+    }
+    
+    .navLinks li {
+      margin: 0;
+      width: 100%;
+    }
+  
+    .navLinks a {
+        padding: 15px 0; /* <-- SỬA LẠI: Chỉ padding trên/dưới, không padding trái/phải */
+        width: 100%;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        text-align: center; /* Giữ nguyên */
+        box-sizing: border-box; /* <-- THÊM MỚI: Đảm bảo width 100% là chuẩn */
+      }
+  
+    .navLinks a.active,
+    .navLinks a:hover {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Tắt border-bottom cũ */
+      background-color: rgba(0, 0, 0, 0.1); /* Thêm background khi hover */
+    }
+  }
